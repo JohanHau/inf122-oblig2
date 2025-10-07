@@ -1,0 +1,22 @@
+cabal-version: 2.4
+name: oblig2
+version: 0.1.0.0
+synopsis: INF122 Oblig 2 - Regneark (Spreadsheet)
+description: A Haskell library for evaluating spreadsheets with cell references, expressions, and parsing functionality.
+author: Student
+maintainer: student@uib.no
+category: Education
+build-type: Simple
+
+library
+    exposed-modules:
+        Oblig2
+    
+    build-depends:
+        base >= 4.14 && < 5,
+        containers >= 0.6 && < 0.7
+    
+    hs-source-dirs: src
+    default-language: Haskell2010
+    
+    ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
