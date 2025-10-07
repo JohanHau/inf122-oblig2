@@ -5,6 +5,7 @@
             ,TypeFamilies
             ,DeriveFunctor #-}
 {-# LANGUAGE InstanceSigs #-}
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 module Oblig2 where
 import Control.Arrow
 import Control.Monad
@@ -92,7 +93,6 @@ instance Ranged CellRef where
 
 
 
-
 -- | A sample spreadsheet using Double for numeric type
 sheet1 :: Sheet Double CellRef
 sheet1 =
@@ -129,7 +129,37 @@ evaluate :: (Num number, Ranged cell)
          => Sheet number cell
          -> Expression number cell
          -> Maybe number
-evaluate sheet expr = undefined
+evaluate sheet expr = 
+  case expr of 
+    Ref c -> do
+      e <- Map.lookup c (content sheet) 
+      evaluate sheet e
+
+    Constant n -> Just n
+    Sum rg -> 
+      let
+        cells = Set.toList (cellRange (dimension sheet) rg)
+      in
+        fmap sum (sequence (map (evaluate sheet . Ref) cells))
+    Add expr1 expr2 -> do
+      n1 <- evaluate sheet expr1
+      n2 <- evaluate sheet expr2
+      pure (n1 + n2)
+
+    Mul expr1 expr2 -> do
+      n1 <- evaluate sheet expr1
+      n2 <- evaluate sheet expr2
+      pure (n1 * n2)
+
+    Sub expr1 expr2 -> do
+      n1 <- evaluate sheet expr1
+      n2 <- evaluate sheet expr2
+      pure (n1 - n2)
+
+
+
+
+
 
 
 
