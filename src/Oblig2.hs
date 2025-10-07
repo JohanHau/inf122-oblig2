@@ -4,6 +4,7 @@
             ,TypeApplications
             ,TypeFamilies
             ,DeriveFunctor #-}
+{-# LANGUAGE InstanceSigs #-}
 module Oblig2 where
 import Control.Arrow
 import Control.Monad
@@ -65,9 +66,6 @@ data Sheet number cell = Sheet
     -- ^ The content of the sheet as a mapping from cell references to expressions
   }
 
-
-
-
 -- | CellRef is the standard way to refer to a cell in the spreadsheet.
 data CellRef = Cell { column :: Char, row :: Integer }
   deriving (Eq,Ord)
@@ -79,7 +77,21 @@ instance Ranged CellRef where
     data Dimension CellRef
        = Dimension { columns :: [Char]
                    , rows :: [Integer] }
-    cellRange dim box = undefined
+
+    cellRange :: Dimension CellRef -> CellRange CellRef -> Set CellRef
+    cellRange dim box = 
+      let cols = columns dim
+          rs = rows dim
+          (Cell c1 r1) = upperLeft box
+          (Cell c2 r2) = lowerRight box
+          actualCols = filter (\c -> c >= c1 && c <= c2) cols
+          actualRows = filter (\r -> r >= r1 && r <= r2) rs
+          cells = [Cell c r | c <-  actualCols, r <- actualRows]
+        in
+          Set.fromList cells
+
+
+
 
 -- | A sample spreadsheet using Double for numeric type
 sheet1 :: Sheet Double CellRef
