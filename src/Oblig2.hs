@@ -116,7 +116,23 @@ sheet1 =
     }
 
 sheet2 :: Sheet Double CellRef
-sheet2 = undefined
+sheet2 =
+  Sheet
+    { name = "Sheet2", -- ^ Name of the sheet
+      dimension = Dimension "ABC" [1..2],
+      content = 
+        Map.fromList
+          [ ((Cell 'A' 1), Constant 12),
+            ((Cell 'B' 1), Mul (Constant 4) (Ref (Cell 'A' 2))),
+            ((Cell 'C' 1), Add (Ref (Cell 'A' 1)) (Ref (Cell 'C' 2))),
+            ((Cell 'A' 2), Constant 2),
+            ((Cell 'B' 2), Constant 4),
+            ((Cell 'C' 2),
+              Sum (Box (Cell 'A' 1) (Cell 'C' 1))
+            )
+          ]
+    }
+  
 
 
 convert ::(Alternative f, Foldable t)
